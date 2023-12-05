@@ -21,7 +21,7 @@ namespace FC.Codeflix.Catalog.Domain.Entity
             Validate();
         }
 
-        public void Validate()
+        private void Validate()
         {
             if (String.IsNullOrWhiteSpace(Name))
             {
@@ -43,6 +43,18 @@ namespace FC.Codeflix.Catalog.Domain.Entity
             {
                 throw new EntityValidationException($"{nameof(Description)} should be less or equal 10.000 characters long");
             }
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
+            Validate();
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+            Validate();
         }
     }
 }
