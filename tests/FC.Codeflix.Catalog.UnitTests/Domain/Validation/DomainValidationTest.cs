@@ -54,12 +54,66 @@ namespace FC.Codeflix.Catalog.UnitTests.Domain.Validation
         }
 
         // max length
+        [Theory(DisplayName = nameof(MaxLengthOk))]
+        [Trait("Domain", "DomainValidation - Validation")]
+        [MemberData(nameof(GetValueSmallerThanMax), parameters: 5)]
+        public void MaxLengthOk(string target, int maxLength)
+        {
+            Action action = () => DomainValidation.MaxLength(target, maxLength, "FieldName");
+            action.Should().NotThrow();
+        }
+
+        public static IEnumerable<object[]> GetValueSmallerThanMax(int numberOfTests)
+        {
+            yield return new object[] { "123456", 7 };
+
+            var faker = new Faker();
+
+            for (int i = 0; i < (numberOfTests - 1); i++)
+            {
+                var example = faker.Commerce.ProductName();
+                var maxLength = example.Length + (new Random()).Next(1, 5);
+
+                yield return new object[]{
+                    example,
+                    maxLength
+                };
+            }
+        }
+
+        [Theory(DisplayName = nameof(MaxLengthThrowWhenGreater))]
+        [Trait("Domain", "DomainValidation - Validation")]
+        [MemberData(nameof(GetValuesGreaterThenMax), parameters: 5)]
+        public void MaxLengthThrowWhenGreater(string target, int maxLength)
+        {
+            Action action = () => DomainValidation.MaxLength(target, maxLength, "FieldName");
+            action.Should().Throw<EntityValidationException>()
+                .WithMessage($"FieldName should not be greater than {maxLength} characters long");
+        }
+
+        public static IEnumerable<object[]> GetValuesGreaterThenMax(int numberOfTests)
+        {
+            yield return new object[] { "123456", 5 };
+
+            var faker = new Faker();
+
+            for (int i = 0; i < (numberOfTests - 1); i++)
+            {
+                var example = faker.Commerce.ProductName();
+                var maxLength = example.Length - (new Random()).Next(1, 5);
+
+                yield return new object[]{
+                    example,
+                    maxLength
+                };
+            }
+        }
 
         // min length 
-        [Theory(DisplayName = nameof(MinLegthOk))]
+        [Theory(DisplayName = nameof(MinLengthOk))]
         [Trait("Domain", "DomainValidation - Validation")]
         [MemberData(nameof(GetValuesGreaterThanMin), parameters: 5)]
-        public void MinLegthOk(string target, int minLength)
+        public void MinLengthOk(string target, int minLength)
         {
             Action action = () =>
                 DomainValidation.MinLength(target, minLength, "FieldName");
@@ -83,14 +137,14 @@ namespace FC.Codeflix.Catalog.UnitTests.Domain.Validation
             }
         }
 
-        [Theory(DisplayName = nameof(MinLegthThrowWhenLess))]
+        [Theory(DisplayName = nameof(MinLengthThrowWhenLess))]
         [Trait("Domain", "DomainValidation - Validation")]
         [MemberData(nameof(GetValuesSmallerThanMin), parameters: 5)]
-        public void MinLegthThrowWhenLess(string target, int minLength)
+        public void MinLengthThrowWhenLess(string target, int minLength)
         {
             Action action = () =>
                 DomainValidation.MinLength(target, minLength, "FieldName");
-            action.Should().Throw<EntityValidationException>().WithMessage($"FieldName should not be than {minLength} characters long");
+            action.Should().Throw<EntityValidationException>().WithMessage($"FieldName should not be less than {minLength} characters long");
         }
 
         public static IEnumerable<object[]> GetValuesSmallerThanMin(int numberOfTests)
