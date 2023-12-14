@@ -1,6 +1,6 @@
-﻿using FC.Codeflix.Catalog.Application.Interfaces;
+﻿using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 using FC.Codeflix.Catalog.Domain.Entity;
-using FC.Codeflix.Catalog.Domain.Repository;
+using FC.Codeflix.Catalog.Domain.Exceptions;
 using FluentAssertions;
 using Moq;
 using UseCases = FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
@@ -56,5 +56,31 @@ public class CreateCategoryTest
         output.IsActive.Should().Be(input.IsActive);
         output.Id.Should().NotBeEmpty();
         output.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
+    }
+
+    [Theory(DisplayName = nameof(ThrowWhenCantInstantiateAggregate))]
+    [Trait("Application", "CreateCategory - Use Cases")]
+    [MemberData(nameof(GetInvalidInputs))]
+    public void ThrowWhenCantInstantiateAggregate(CreateCategoryInput input, string exceptionMessage)
+    {
+        var useCase = new UseCases.CreateCategory(
+            _createCategoryTestFixture.GetRepositoryMock().Object,
+            _createCategoryTestFixture.GetUnitOfWorkMock().Object
+        );
+
+        Action action = async () => await useCase.Handle(input, CancellationToken.None);
+
+        action.Should().Throw<EntityValidationException>().WithMessage(exceptionMessage);
+    }
+
+    public static IEnumerable<object[]> GetInvalidInputs()
+    {
+        var invalidInputList = new List<object[]>();
+
+        //nome não pode ser menor que 4 caracteres
+        //nome não pode ser maior do que 255 caracteres
+        //description não pode ser nula
+
+        return invalidInputList;
     }
 }
