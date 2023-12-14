@@ -1,13 +1,12 @@
 
+using FC.Codeflix.Catalog.Application.Interfaces;
+using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
+using FC.Codeflix.Catalog.Domain.Repository;
 using FC.Codeflix.Catalog.UnitTests.Common;
-using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
-
+using Moq;
 
 namespace FC.Codeflix.Catalog.UnitTests.Application.CreateCategory
 {
-    [CollectionDefinition(nameof(CreateCategoryTestFixtureCollection))]
-    public class CreateCategoryTestFixtureCollection : ICollectionFixture<CreateCategoryTestFixture> { }
-
     public class CreateCategoryTestFixture : BaseFixture
     {
         public CreateCategoryTestFixture() : base() { }
@@ -40,12 +39,31 @@ namespace FC.Codeflix.Catalog.UnitTests.Application.CreateCategory
             return categoryDescription;
         }
 
-        public DomainEntity.Category GetValidCategory()
+        public bool GetRandomBoolean()
         {
-            return new DomainEntity.Category(
+            return (new Random()).NextDouble() < 0.5;
+        }
+
+        public CreateCategoryInput GetValidInput()
+        {
+            return new(
                 GetValidCategoryName(),
-                GetValidCategoryDescription()
+                GetValidCategoryDescription(),
+                GetRandomBoolean()
             );
         }
+
+        public Mock<ICategoryRepository> GetRepositoryMock()
+        {
+            return new Mock<ICategoryRepository>();
+        }
+
+        public Mock<IUnitOfWork> GetUnitOfWorkMock()
+        {
+            return new Mock<IUnitOfWork>();
+        }
     }
+
+    [CollectionDefinition(nameof(CreateCategoryTestFixture))]
+    public class CreateCategoryTestFixtureCollection : ICollectionFixture<CreateCategoryTestFixture> { }
 }
