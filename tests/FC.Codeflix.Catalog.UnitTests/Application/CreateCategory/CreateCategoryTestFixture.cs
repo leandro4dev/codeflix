@@ -1,4 +1,3 @@
-
 using FC.Codeflix.Catalog.Application.Interfaces;
 using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 using FC.Codeflix.Catalog.Domain.Repository;
@@ -51,6 +50,53 @@ namespace FC.Codeflix.Catalog.UnitTests.Application.CreateCategory
                 GetValidCategoryDescription(),
                 GetRandomBoolean()
             );
+        }
+
+        public CreateCategoryInput GetInvalidInputShortName()
+        {
+            //nome não pode ser menor que 4 caracteres
+            var invalidInputShortName = GetValidInput();
+            invalidInputShortName.Name = invalidInputShortName.Name.Substring(0, 2);
+
+            return invalidInputShortName;
+        }
+
+        public CreateCategoryInput GetInvalidInputTooLongName()
+        {
+            var invalidInputTooLongName = GetValidInput();
+            var tooLongNameForCategory = "";
+
+            while (tooLongNameForCategory.Length < 255)
+            {
+                tooLongNameForCategory = $"{tooLongNameForCategory} {Faker.Commerce.ProductName}";
+            }
+
+            invalidInputTooLongName.Name = tooLongNameForCategory;
+
+            return invalidInputTooLongName;
+        }
+
+        public CreateCategoryInput GetInvalidInputDescriptionNull()
+        {
+            var invalidInputDescriptionNull = GetValidInput();
+            invalidInputDescriptionNull.Description = null!;
+
+            return invalidInputDescriptionNull;
+        }
+
+        public CreateCategoryInput GetInvalidInputDescriptionTooLong()
+        {
+            var invalidInputTooLongDescription = GetValidInput();
+            var tooLongDescription = Faker.Commerce.ProductName();
+
+            while (tooLongDescription.Length <= 10000)
+            {
+                tooLongDescription = $"{tooLongDescription} {Faker.Commerce.ProductDescription()}";
+            }
+
+            invalidInputTooLongDescription.Description = tooLongDescription;
+
+            return invalidInputTooLongDescription;
         }
 
         public Mock<ICategoryRepository> GetRepositoryMock()
