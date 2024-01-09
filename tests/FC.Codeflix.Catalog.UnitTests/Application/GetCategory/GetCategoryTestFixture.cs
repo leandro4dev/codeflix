@@ -43,7 +43,10 @@ public class GetCategoryTestFixture : BaseFixture
         );
     }
 
-    public Mock<ICategoryRepository> GetRepositoryMock() => new();
+    public Mock<ICategoryRepository> GetRepositoryMock()
+    {
+        return new Mock<ICategoryRepository>();
+    }
 }
 
 [CollectionDefinition(nameof(GetCategoryTestFixture))]
