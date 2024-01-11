@@ -1,4 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
+using FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.UnitTests.Application.CreateCategory;
 using FluentAssertions;
 using Moq;
 using UseCase = FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
@@ -15,25 +17,22 @@ public class UpdateCategoryTest
         _fixture = fixture;
     }
 
-    [Fact(DisplayName = nameof(UpdateCategory))]
+    [Theory(DisplayName = nameof(UpdateCategory))]
     [Trait("Application", "UpdateCategory - Use Cases")]
-    public async Task UpdateCategory()
+    [MemberData(
+        nameof(UpdateCategoryTestDataGenerator.GetCategoriesToUpdate),
+        parameters: 10,
+        MemberType = typeof(UpdateCategoryTestDataGenerator)
+    )]
+    public async Task UpdateCategory(Category exampleCategory, UseCase.UpdateCategoryInput input)
     {
         var repositoryMock = _fixture.GetRepositoryMock();
         var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
-        var categoryExample = _fixture.GetExampleCategory();
 
         repositoryMock.Setup(x => x.Get(
-            categoryExample.Id,
+            exampleCategory.Id,
             It.IsAny<CancellationToken>()
-        )).ReturnsAsync(categoryExample);
-
-        var input = new UpdateCategoryInput(
-            categoryExample.Id,
-            _fixture.GetValidCategoryName(), 
-            _fixture.GetValidCategoryDescription(), 
-            !categoryExample.IsActive
-        );
+        )).ReturnsAsync(exampleCategory);
 
         var useCase = new UseCase.UpdateCategory(repositoryMock.Object, unitOfWorkMock.Object);
 
@@ -42,12 +41,12 @@ public class UpdateCategoryTest
 
         //assert
         repositoryMock.Verify(x => x.Get(
-            categoryExample.Id,
+            exampleCategory.Id,
             It.IsAny<CancellationToken>()
         ), Times.Once);
 
         repositoryMock.Verify(x => x.Update(
-            categoryExample,
+            exampleCategory,
             It.IsAny<CancellationToken>()
         ), Times.Once);
 
