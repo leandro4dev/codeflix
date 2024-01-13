@@ -61,6 +61,44 @@ public class UpdateCategoryTestFixture : BaseFixture
         );
     }
 
+    public UpdateCategoryInput GetInvalidInputShortName()
+    {
+        var invalidInputShortName = GetValidInput();
+        invalidInputShortName.Name = invalidInputShortName.Name.Substring(0, 2);
+
+        return invalidInputShortName;
+    }
+
+    public UpdateCategoryInput GetInvalidInputTooLongName()
+    {
+        var invalidInputTooLongName = GetValidInput();
+        var tooLongNameForCategory = "";
+
+        while (tooLongNameForCategory.Length < 255)
+        {
+            tooLongNameForCategory = $"{tooLongNameForCategory} {Faker.Commerce.ProductName}";
+        }
+
+        invalidInputTooLongName.Name = tooLongNameForCategory;
+
+        return invalidInputTooLongName;
+    }
+
+    public UpdateCategoryInput GetInvalidInputDescriptionTooLong()
+    {
+        var invalidInputTooLongDescription = GetValidInput();
+        var tooLongDescription = Faker.Commerce.ProductName();
+
+        while (tooLongDescription.Length <= 10000)
+        {
+            tooLongDescription = $"{tooLongDescription} {Faker.Commerce.ProductDescription()}";
+        }
+
+        invalidInputTooLongDescription.Description = tooLongDescription;
+
+        return invalidInputTooLongDescription;
+    }
+
 
     public Mock<ICategoryRepository> GetRepositoryMock() 
     { 
