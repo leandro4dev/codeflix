@@ -1,9 +1,10 @@
 ﻿namespace FC.Codeflix.Catalog.Domain.SeedWork;
-public interface IGenericRepository<TAgrregate> : IRepository
+public interface IGenericRepository<TAggregate> : IRepository 
+    where TAggregate : AggregateRoot
 {
-    public Task Insert(TAgrregate aggregate, CancellationToken cancellationToken);
-    public Task<TAgrregate> Get(Guid id, CancellationToken cancellationToken);
-    public Task Delete(TAgrregate aggregate, CancellationToken cancellationToken);
-    public Task Update(TAgrregate aggregate, CancellationToken cancellationToken);
+    public Task Insert(TAggregate aggregate, CancellationToken cancellationToken);
+    public Task<TAggregate> Get(Guid id, CancellationToken cancellationToken);
+    public Task Delete(TAggregate aggregate, CancellationToken cancellationToken);
+    public Task Update(TAggregate aggregate, CancellationToken cancellationToken);
 
 }
