@@ -1,24 +1,24 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.DeleteCategory;
+﻿using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
 using FluentAssertions;
 
-namespace FC.Codeflix.Catalog.UnitTests.Application.DeleteCategory;
+namespace FC.Codeflix.Catalog.UnitTests.Application.Category.UpdateCategory;
 
-[Collection(nameof(DeleteCategoryTestFixture))]
-public class DeleteCategoryInputValidationTest
+[Collection(nameof(UpdateCategoryTestFixture))]
+public class UpdateCategoryInputValidationTest
 {
-    private readonly DeleteCategoryTestFixture _fixture;
+    private readonly UpdateCategoryTestFixture _fixture;
 
-    public DeleteCategoryInputValidationTest(DeleteCategoryTestFixture fixture)
+    public UpdateCategoryInputValidationTest(UpdateCategoryTestFixture fixture)
     {
         _fixture = fixture;
     }
 
     [Fact(DisplayName = nameof(ValidationOk))]
-    [Trait("Application", "DeleteCategoryInputValidationTest - UseCases")]
+    [Trait("Application", "UpdateCategoryInputValidationTest - UseCases")]
     public void ValidationOk()
     {
-        var validInput = new DeleteCategoryInput(Guid.NewGuid());
-        var validator = new DeleteCategoryInputValidator();
+        var validInput = _fixture.GetValidInput();
+        var validator = new UpdateCategoryInputValidator();
 
         var validationResult = validator.Validate(validInput);
 
@@ -28,11 +28,11 @@ public class DeleteCategoryInputValidationTest
     }
 
     [Fact(DisplayName = nameof(InvalidWhenEmptyGuidId))]
-    [Trait("Application", "DeleteCategoryInputValidationTest - UseCases")]
+    [Trait("Application", "GetCategoryInputValidationTest - UseCases")]
     public void InvalidWhenEmptyGuidId()
     {
-        var validInput = new DeleteCategoryInput(Guid.Empty);
-        var validator = new DeleteCategoryInputValidator();
+        var validInput = _fixture.GetValidInput(Guid.Empty);
+        var validator = new UpdateCategoryInputValidator();
 
         var validationResult = validator.Validate(validInput);
 

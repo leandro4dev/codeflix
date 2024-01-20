@@ -1,5 +1,6 @@
+using FC.Codeflix.Catalog.UnitTests.Application.Category.CreateCategory;
 
-namespace FC.Codeflix.Catalog.UnitTests.Application.CreateCategory
+namespace FC.Codeflix.Catalog.UnitTests.Application.Category.CreateCategory
 {
     public class CreateCategoryTestDataGenerator
     {
@@ -7,11 +8,11 @@ namespace FC.Codeflix.Catalog.UnitTests.Application.CreateCategory
         {
             var fixture = new CreateCategoryTestFixture();
             var invalidInputList = new List<object[]>();
-            var totalInvalidCases = 4;    
+            var totalInvalidCases = 4;
 
-            for(int index = 0; index < times; index++)
+            for (int index = 0; index < times; index++)
             {
-                switch(index % totalInvalidCases)
+                switch (index % totalInvalidCases)
                 {
                     case 0:
                         //nome não pode ser menor que 3 caracteres

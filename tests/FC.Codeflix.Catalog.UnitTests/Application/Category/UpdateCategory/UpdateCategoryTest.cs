@@ -1,13 +1,13 @@
 ﻿using FC.Codeflix.Catalog.Application.Exceptions;
 using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
-using FC.Codeflix.Catalog.Domain.Entity;
+using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Domain.Exceptions;
-using FC.Codeflix.Catalog.UnitTests.Application.CreateCategory;
+using FC.Codeflix.Catalog.UnitTests.Application.Category.CreateCategory;
 using FluentAssertions;
 using Moq;
 using UseCase = FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
 
-namespace FC.Codeflix.Catalog.UnitTests.Application.UpdateCategory;
+namespace FC.Codeflix.Catalog.UnitTests.Application.Category.UpdateCategory;
 
 [Collection(nameof(UpdateCategoryTestFixture))]
 public class UpdateCategoryTest
@@ -26,7 +26,7 @@ public class UpdateCategoryTest
         parameters: 10,
         MemberType = typeof(UpdateCategoryTestDataGenerator)
     )]
-    public async Task UpdateCategory(Category exampleCategory, UseCase.UpdateCategoryInput input)
+    public async Task UpdateCategory(DomainEntity.Category exampleCategory, UpdateCategoryInput input)
     {
         var repositoryMock = _fixture.GetRepositoryMock();
         var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
@@ -56,7 +56,7 @@ public class UpdateCategoryTest
             It.IsAny<CancellationToken>()
         ), Times.Once);
 
-   
+
         output.Should().NotBeNull();
         output.Id.Should().Be(input.Id);
         output.Name.Should().Be(input.Name);
@@ -72,8 +72,8 @@ public class UpdateCategoryTest
         MemberType = typeof(UpdateCategoryTestDataGenerator)
     )]
     public async Task UpdateCategoryWithoutProvidingIsActive(
-        Category exampleCategory, 
-        UseCase.UpdateCategoryInput exampleInput
+        DomainEntity.Category exampleCategory,
+        UpdateCategoryInput exampleInput
     )
     {
         //arrange
@@ -127,8 +127,8 @@ public class UpdateCategoryTest
         MemberType = typeof(UpdateCategoryTestDataGenerator)
     )]
     public async Task UpdateCategoryOnlyName(
-        Category exampleCategory,
-        UseCase.UpdateCategoryInput exampleInput
+        DomainEntity.Category exampleCategory,
+        UpdateCategoryInput exampleInput
     )
     {
         //arrange
@@ -189,7 +189,7 @@ public class UpdateCategoryTest
 
         var useCase = new UseCase.UpdateCategory(
             repositoryMock.Object,
-            unitOfWorkMock.Object            
+            unitOfWorkMock.Object
         );
 
         var task = async () => await useCase.Handle(input, CancellationToken.None);
@@ -227,7 +227,7 @@ public class UpdateCategoryTest
         )).ReturnsAsync(exampleCategory);
 
         var useCase = new UseCase.UpdateCategory(
-            repositoryMock.Object, 
+            repositoryMock.Object,
             unitOfWorkMock.Object
         );
 

@@ -1,9 +1,8 @@
 using FC.Codeflix.Catalog.Domain.Exceptions;
-using FC.Codeflix.Catalog.UnitTests.Domain.Entity.Category;
 using FluentAssertions;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
-namespace FC.Codeflix.Catalog.UnitTests
+namespace FC.Codeflix.Catalog.UnitTests.Domain.Entity.Category
 {
     [Collection(nameof(CategoryTestFixture))]
     public class CategoryTest
@@ -32,7 +31,7 @@ namespace FC.Codeflix.Catalog.UnitTests
             category.Name.Should().Be(validCategory.Name);
             category.Description.Should().Be(validCategory.Description);
             category.Id.Should().NotBeEmpty();
-            category.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
+            category.CreatedAt.Should().NotBeSameDateAs(default);
 
             (category.CreatedAt >= datetimeBefore).Should().BeTrue();
             (category.CreatedAt <= datetimeAfter).Should().BeTrue();
@@ -55,7 +54,7 @@ namespace FC.Codeflix.Catalog.UnitTests
             category.Name.Should().Be(validCategory.Name);
             category.Description.Should().Be(validCategory.Description);
             category.Id.Should().NotBeEmpty();
-            category.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
+            category.CreatedAt.Should().NotBeSameDateAs(default);
 
             (category.CreatedAt >= datetimeBefore).Should().BeTrue();
             (category.CreatedAt <= datetimeAfter).Should().BeTrue();
@@ -115,7 +114,7 @@ namespace FC.Codeflix.Catalog.UnitTests
         {
             var validCategory = _categoryTestFixture.GetValidCategory();
 
-            var invalidName = String.Join(
+            var invalidName = string.Join(
                 null,
                 Enumerable.Range(1, 256).Select(_ => "a").ToArray()
             );
@@ -131,7 +130,7 @@ namespace FC.Codeflix.Catalog.UnitTests
         {
             var validCategory = _categoryTestFixture.GetValidCategory();
 
-            var invalidDescription = String.Join(
+            var invalidDescription = string.Join(
                 null,
                 Enumerable.Range(1, 10001).Select(_ => "a").ToArray()
             );

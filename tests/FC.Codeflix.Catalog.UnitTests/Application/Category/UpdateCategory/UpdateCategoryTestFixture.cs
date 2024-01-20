@@ -1,14 +1,14 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
-using FC.Codeflix.Catalog.Domain.Entity;
-using FC.Codeflix.Catalog.UnitTests.Application.Common;
+using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.UnitTests.Application.Category.Common;
 
-namespace FC.Codeflix.Catalog.UnitTests.Application.UpdateCategory;
+namespace FC.Codeflix.Catalog.UnitTests.Application.Category.UpdateCategory;
 
 public class UpdateCategoryTestFixture : CategoryUseCasesBaseFixture
 {
-    public Category GetExampleCategory()
+    public DomainEntity.Category GetExampleCategory()
     {
-        return new Category(
+        return new DomainEntity.Category(
             GetValidCategoryName(),
             GetValidCategoryDescription(),
             GetRandomBoolean()

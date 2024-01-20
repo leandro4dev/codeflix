@@ -1,11 +1,13 @@
-﻿namespace FC.Codeflix.Catalog.UnitTests.Application.UpdateCategory;
+﻿using FC.Codeflix.Catalog.UnitTests.Application.Category.UpdateCategory;
+
+namespace FC.Codeflix.Catalog.UnitTests.Application.Category.UpdateCategory;
 
 public class UpdateCategoryTestDataGenerator
 {
     public static IEnumerable<object[]> GetCategoriesToUpdate(int times = 5)
     {
         var fixture = new UpdateCategoryTestFixture();
-        for(int index = 0; index < times; index++)
+        for (int index = 0; index < times; index++)
         {
             var exampleCategory = fixture.GetExampleCategory();
             var exampleInput = fixture.GetValidInput(exampleCategory.Id);
