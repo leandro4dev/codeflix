@@ -1,10 +1,9 @@
-﻿using FC.Codeflix.Catalog.Infra.Data.EF;
+﻿using FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.Infra.Data.EF;
 using FC.Codeflix.Catalog.IntegrationTests.Common;
 using Microsoft.EntityFrameworkCore;
-using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
 namespace FC.Codeflix.Catalog.IntegrationTests.Infra.Data.EF.Repositories.CategoryRepository;
-
 
 public class CategoryRepositoryTestFixture : BaseFixture
 {
@@ -41,9 +40,9 @@ public class CategoryRepositoryTestFixture : BaseFixture
         return new Random().NextDouble() < 0.5;
     }
 
-    public DomainEntity.Category GetExampleCategory()
+    public Category GetExampleCategory()
     {
-        return new DomainEntity.Category(
+        return new Category(
             GetValidCategoryName(),
             GetValidCategoryDescription(),
             GetRandomBoolean()
@@ -57,6 +56,12 @@ public class CategoryRepositoryTestFixture : BaseFixture
             .UseInMemoryDatabase("integration-tests-db")
             .Options
         );
+    }
+
+    public List<Category> GetExampleCategoriesList(int length = 10)
+    {
+        return Enumerable.Range(1, length)
+            .Select(_ => GetExampleCategory()).ToList();
     }
 }
 
