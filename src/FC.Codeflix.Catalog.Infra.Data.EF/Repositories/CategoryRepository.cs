@@ -34,6 +34,11 @@ public class CategoryRepository : ICategoryRepository
         return category!;
     }
 
+    public Task Update(Category aggregate, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(_context.Categories.Update(aggregate));
+    }
+
     public Task Delete(Category aggregate, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -45,8 +50,5 @@ public class CategoryRepository : ICategoryRepository
         throw new NotImplementedException();
     }
 
-    public Task Update(Category aggregate, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
