@@ -26,12 +26,12 @@ public class CategoryRepository : ICategoryRepository
             cancellationToken
         );
 
-        if (category == null)
-        {
-            throw new NotFoundException($"Category '{id}' not found");
-        }
+        NotFoundException.ThrowIfNull(
+            category, 
+            $"Category '{id}' not found"
+        );
 
-        return category;
+        return category!;
     }
 
     public Task Delete(Category aggregate, CancellationToken cancellationToken)
