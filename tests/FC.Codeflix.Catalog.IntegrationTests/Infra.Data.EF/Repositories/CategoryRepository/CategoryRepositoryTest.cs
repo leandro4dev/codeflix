@@ -15,6 +15,7 @@ public class CategoryRepositoryTest
         _fixture = fixture;
     }
 
+
     [Fact(DisplayName = nameof(Insert))]
     [Trait("Integration/Infra.Data.EF", "CategoryRepository - Repositories")]
     public async Task Insert()
@@ -26,7 +27,7 @@ public class CategoryRepositoryTest
         await categoryRepository.Insert(exampleCategory, CancellationToken.None);
         await dbContext.SaveChangesAsync();
 
-        var dbCategory = await dbContext.Categories.FindAsync(exampleCategory.Id);
+        var dbCategory = await (_fixture.CreateDbContext()).Categories.FindAsync(exampleCategory.Id);
 
         dbCategory.Should().NotBeNull();
         dbCategory!.Name.Should().Be(exampleCategory.Name);
@@ -35,6 +36,7 @@ public class CategoryRepositoryTest
         dbCategory.CreatedAt.Should().Be(exampleCategory.CreatedAt);
     }
 
+
     [Fact(DisplayName = nameof(Get))]
     [Trait("Integration/Infra.Data.EF", "CategoryRepository - Repositories")]
     public async Task Get()
@@ -42,13 +44,13 @@ public class CategoryRepositoryTest
         CodeflixCatalogDbContext dbContext = _fixture.CreateDbContext();
         var exampleCategory = _fixture.GetExampleCategory();
         var exampleCategoryList = _fixture.GetExampleCategoriesList();
-
-        await dbContext.AddAsync(exampleCategory);
+        exampleCategoryList.Add(exampleCategory);
+        
         await dbContext.AddRangeAsync(exampleCategoryList);
         await dbContext.SaveChangesAsync();
 
         var categoryRepository = 
-            new Repository.CategoryRepository(dbContext);
+            new Repository.CategoryRepository(_fixture.CreateDbContext());
 
         var dbCategory = await categoryRepository.Get(exampleCategory.Id, CancellationToken.None);
 
@@ -59,6 +61,7 @@ public class CategoryRepositoryTest
         dbCategory.IsActive.Should().Be(exampleCategory.IsActive);
         dbCategory.CreatedAt.Should().Be(exampleCategory.CreatedAt);
     }
+
 
     [Fact(DisplayName = nameof(GetThrowIfNotFound))]
     [Trait("Integration/Infra.Data.EF", "CategoryRepository - Repositories")]
@@ -71,12 +74,52 @@ public class CategoryRepositoryTest
         await dbContext.SaveChangesAsync();
 
         var categoryRepository =
-            new Repository.CategoryRepository(dbContext);
+            new Repository.CategoryRepository(_fixture.CreateDbContext());
 
         var task = async () => await categoryRepository
             .Get(exampleId, CancellationToken.None);
 
         await task.Should().ThrowAsync<NotFoundException>()
             .WithMessage($"Category '{exampleId}' not found");
+    }
+
+
+    [Fact(DisplayName = nameof(Update))]
+    [Trait("Integration/Infra.Data.EF", "CategoryRepository - Repositories")]
+    public async Task Update()
+    {
+        CodeflixCatalogDbContext dbContext = _fixture.CreateDbContext();
+        var exampleCategory = _fixture.GetExampleCategory();
+
+        var newCategoryValues = _fixture.GetExampleCategory();
+
+        exampleCategory.Update(
+            newCategoryValues.Name, 
+            newCategoryValues.Description
+        );
+
+        await dbContext.AddAsync(exampleCategory);
+        await dbContext.SaveChangesAsync(CancellationToken.None);
+        
+        var categoryRepository = 
+            new Repository.CategoryRepository(dbContext);
+
+        await categoryRepository.Update(
+            exampleCategory, 
+            CancellationToken.None
+        );
+
+        var dbCategory = await (_fixture.CreateDbContext())
+            .Categories.FindAsync(
+                exampleCategory.Id,
+                CancellationToken.None
+            );
+
+        dbCategory.Should().NotBeNull();
+        dbCategory!.Id.Should().Be(exampleCategory.Id);
+        dbCategory.Name.Should().Be(exampleCategory.Name);
+        dbCategory.Description.Should().Be(exampleCategory.Description);
+        dbCategory.IsActive.Should().Be(exampleCategory.IsActive);
+        dbCategory.CreatedAt.Should().Be(exampleCategory.CreatedAt);
     }
 }
