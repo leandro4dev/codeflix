@@ -43,7 +43,7 @@ public class CategoryRepository : ICategoryRepository
 
     public Task Delete(Category aggregate, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_context.Categories.Remove(aggregate));
     }
 
 
