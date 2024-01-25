@@ -70,6 +70,16 @@ public class CategoryRepositoryTestFixture : BaseFixture
         return Enumerable.Range(1, length)
             .Select(_ => GetExampleCategory()).ToList();
     }
+
+    public List<Category> GetExampleCategoriesListWithName(List<string> name)
+    {
+        return name.Select(name =>
+        {
+            var category = GetExampleCategory();
+            category.Update(name, category.Description);
+            return category;
+        }).ToList();
+    }
 }
 
 [CollectionDefinition(nameof(CategoryRepositoryTestFixture))]
