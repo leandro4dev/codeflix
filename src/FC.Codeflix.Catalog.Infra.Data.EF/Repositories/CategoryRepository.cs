@@ -49,14 +49,16 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<SearchOutput<Category>> Search(SearchInput input, CancellationToken cancellationToken)
     {
+        var toSkip = (input.Page - 1) * input.PerPage;
         var query = _context.Categories.AsNoTracking();
+
+        query = AddOrderToQuery(query, input.OrderBy, input.Order);
 
         if (!String.IsNullOrWhiteSpace(input.Search))
         {
             query = query.Where(x => x.Name.Contains(input.Search));
         }
 
-        var toSkip = (input.Page - 1) * input.PerPage;
 
         var total = await query.CountAsync();
         var items = await query
@@ -72,5 +74,21 @@ public class CategoryRepository : ICategoryRepository
         );
     }
 
-    
+    private IQueryable<Category> AddOrderToQuery(
+        IQueryable<Category> query,
+        string orderProperty,
+        SearchOrder order
+    )
+    {
+        return (orderProperty.ToLower(), order) switch
+        {
+            ("name", SearchOrder.Asc) => query.OrderBy(x => x.Name),
+            ("name", SearchOrder.Desc) => query.OrderByDescending(x => x.Name),
+            ("id", SearchOrder.Asc) => query.OrderBy(x => x.Id),
+            ("id", SearchOrder.Desc) => query.OrderByDescending(x => x.Id),
+            ("createdat", SearchOrder.Asc) => query.OrderBy(x => x.CreatedAt),
+            ("createdat", SearchOrder.Desc) => query.OrderByDescending(x => x.CreatedAt),
+            _ => query.OrderBy(x => x.Name)
+        };
+    }
 }
