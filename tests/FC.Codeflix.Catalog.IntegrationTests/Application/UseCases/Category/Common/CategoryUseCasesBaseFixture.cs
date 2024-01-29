@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.IntegrationTests.Common;
+﻿using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
+using FC.Codeflix.Catalog.IntegrationTests.Common;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
 namespace FC.Codeflix.Catalog.IntegrationTests.Application.UseCases.Category.Common;
@@ -46,6 +47,7 @@ public class CategoryUseCasesBaseFixture : BaseFixture
             GetRandomBoolean()
         );
     }
+
 
     public List<DomainEntity.Category> GetExampleCategoriesList(int length = 10)
     {
