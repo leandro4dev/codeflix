@@ -4,6 +4,7 @@ using FC.Codeflix.Catalog.Infra.Data.EF;
 using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
 using FC.Codeflix.Catalog.Infra.Data.EF.UnitOfWork;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using UseCase = FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 
 namespace FC.Codeflix.Catalog.IntegrationTests.Application.UseCases.Category.CreateCategory;
@@ -119,7 +120,7 @@ public class CreateCategoryTest
     [Trait("Integration/Application", "CreateCategory - Use Cases")]
     [MemberData(
         nameof(CreateCategoryTestDataGenerator.GetInvalidInputs),
-        parameters: 6,
+        parameters: 4,
         MemberType = typeof(CreateCategoryTestDataGenerator)
     )]
     public async Task ThrowWhenCantInstantiateCategory(CreateCategoryInput input, string exceptionMessage)
@@ -139,5 +140,8 @@ public class CreateCategoryTest
         await task.Should()
             .ThrowAsync<EntityValidationException>()
             .WithMessage(exceptionMessage);
+
+        var dbCategoriesList = _fixture.CreateDbContext(true).Categories.AsNoTracking().ToList();
+        dbCategoriesList.Should().HaveCount(0);
     }
 }
