@@ -203,7 +203,7 @@ public class UpdateCategoryTest
     }
 
 
-    [Theory(DisplayName = "")]
+    [Theory(DisplayName = nameof(ThrowWhenCantUpdateCategory))]
     [Trait("Application", "UpdateCategory - Use Cases")]
     [MemberData(
         nameof(UpdateCategoryTestDataGenerator.GetInvalidInputs),
