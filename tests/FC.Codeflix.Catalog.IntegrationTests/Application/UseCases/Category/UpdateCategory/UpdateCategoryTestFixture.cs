@@ -72,7 +72,6 @@ public class UpdateCategoryTestFixture : CategoryUseCasesBaseFixture
 
         return invalidInputTooLongDescription;
     }
-
 }
 
 [CollectionDefinition(nameof(UpdateCategoryTestFixture))]
