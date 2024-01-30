@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.DeleteCategory;
+﻿using FC.Codeflix.Catalog.Application.Exceptions;
+using FC.Codeflix.Catalog.Application.UseCases.Category.DeleteCategory;
 using FC.Codeflix.Catalog.Infra.Data.EF;
 using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
 using FC.Codeflix.Catalog.Infra.Data.EF.UnitOfWork;
@@ -44,5 +45,24 @@ public class DeleteCategoryTest
 
         var dbCategoriesList = (_fixture.CreateDbContext(true)).Categories.AsNoTracking().ToList() ;
         dbCategoriesList.Should().HaveCount(0);
+    }
+
+    [Fact(DisplayName = nameof(ThrowWhenCategoryNotFound))]
+    [Trait("Integration/Application", "DeleteCategory - Use Cases")]
+    public async Task ThrowWhenCategoryNotFound()
+    {
+        CodeflixCatalogDbContext dbContext = _fixture.CreateDbContext();
+
+        var input = new DeleteCategoryInput(Guid.NewGuid());
+
+        var repository = new CategoryRepository(dbContext);
+        var unitOfWork = new UnitOfWork(dbContext);
+
+        var useCase = new UseCase.DeleteCategory(repository, unitOfWork);
+
+        var task = async () => await useCase.Handle(input, CancellationToken.None);
+
+        await task.Should().ThrowAsync<NotFoundException>()
+            .WithMessage($"Category '{input.Id}' not found");
     }
 }
