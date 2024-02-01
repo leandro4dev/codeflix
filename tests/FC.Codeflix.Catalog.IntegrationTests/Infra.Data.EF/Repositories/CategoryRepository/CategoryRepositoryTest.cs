@@ -218,7 +218,6 @@ public class CategoryRepositoryTest
     [InlineData(10, 2, 5, 5)]
     [InlineData(7, 2, 5, 2)]
     [InlineData(7, 3, 5, 0)]
-
     public async Task SearchReturnsPaginated(
         int quantityCategoriesToGenerate,
         int page,
@@ -273,7 +272,7 @@ public class CategoryRepositoryTest
         }
     }
 
-    [Theory(DisplayName = "")]
+    [Theory(DisplayName = nameof(SearchByText))]
     [Trait("Integration/Infra.Data.EF", "CategoryRepository - Repositories")]
     [InlineData("Action", 1, 5, 1, 1)]
     [InlineData("Horror", 1, 5, 3, 3)]
