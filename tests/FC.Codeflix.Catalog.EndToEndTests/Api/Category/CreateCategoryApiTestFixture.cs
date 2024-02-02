@@ -15,6 +15,6 @@ public class CreateCategoryApiTestFixture : CategoryBaseFixture
     }
 }
 
-[CollectionDefinition(nameof(CreateCategoryApiTestFixtureCollection))]
+[CollectionDefinition(nameof(CreateCategoryApiTestFixture))]
 public class CreateCategoryApiTestFixtureCollection 
     : ICollectionFixture<CreateCategoryApiTestFixture> { }

@@ -1,7 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FluentAssertions;
 using System.Net;
-using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category;
 
@@ -37,11 +36,11 @@ public class CreateCategoryApiTest
         output.CreatedAt.Should()
             .NotBeSameDateAs(default(DateTime));
 
-        DomainEntity.Category dbCategory = await _fixture
+        var dbCategory = await _fixture
             .Persistence.GetById(output.Id);
 
         dbCategory.Should().NotBeNull();
-        dbCategory.Name.Should().Be(input.Name);
+        dbCategory!.Name.Should().Be(input.Name);
         dbCategory.Description.Should().Be(input.Description);
         dbCategory.IsActive.Should().Be(input.IsActive);
         dbCategory.Id.Should().NotBeEmpty();

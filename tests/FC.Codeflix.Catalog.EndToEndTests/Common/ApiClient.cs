@@ -15,7 +15,7 @@ public class ApiClient
     public async Task<(HttpResponseMessage?, TOutput?)> Post<TOutput>(
         string route,
         object payload
-    )
+    ) where TOutput : class
     {
         var response = await _httpClient.PostAsync(
             route,
@@ -27,12 +27,18 @@ public class ApiClient
         );
 
         var outputString = await response.Content.ReadAsStringAsync();
-        var output = JsonSerializer.Deserialize<TOutput>(outputString,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }  
-        );
+        TOutput? output = null;
+
+        if (!String.IsNullOrWhiteSpace(outputString))
+        {
+            output = JsonSerializer.Deserialize<TOutput>(outputString,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }  
+            );
+        }
+
 
         return (response, output);
     }
