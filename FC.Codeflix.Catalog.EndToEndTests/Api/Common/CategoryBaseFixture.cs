@@ -1,10 +1,9 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
-using FC.Codeflix.Catalog.IntegrationTests.Common;
+﻿using FC.Codeflix.Catalog.EndToEndTests.Common;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
-namespace FC.Codeflix.Catalog.IntegrationTests.Application.UseCases.Category.Common;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Common;
 
-public class CategoryUseCasesBaseFixture : BaseFixture
+public class CategoryBaseFixture : BaseFixture
 {
     public string GetValidCategoryName()
     {
@@ -39,18 +38,4 @@ public class CategoryUseCasesBaseFixture : BaseFixture
         return new Random().NextDouble() < 0.5;
     }
 
-    public DomainEntity.Category GetExampleCategory()
-    {
-        return new DomainEntity.Category(
-            GetValidCategoryName(),
-            GetValidCategoryDescription(),
-            GetRandomBoolean()
-        );
-    }
-
-    public List<DomainEntity.Category> GetExampleCategoriesList(int length = 10)
-    {
-        return Enumerable.Range(1, length)
-            .Select(_ => GetExampleCategory()).ToList();
-    }
 }
