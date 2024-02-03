@@ -16,6 +16,7 @@ public class CategoriesController : ControllerBase
         _mediator = mediator;
     }
 
+
     [HttpPost]
     [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
