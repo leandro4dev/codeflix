@@ -34,9 +34,9 @@ public class DeleteCategoryApiTest
         persistenceCategory.Should().BeNull();
     }
 
-    [Fact(DisplayName = nameof(ThrowWhenNotFound))]
+    [Fact(DisplayName = nameof(ErrorWhenNotFound))]
     [Trait("End2End/Api", "Category/Delete - Endpoints")]
-    public async Task ThrowWhenNotFound()
+    public async Task ErrorWhenNotFound()
     {
         var exampleCategoryList = _fixture.GetExampleCategoriesList();
         await _fixture.Persistence.InsertList(exampleCategoryList);
