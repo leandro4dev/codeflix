@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System.Text;
 using System.Text.Json;
+using Xunit.Sdk;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Common;
 
@@ -58,6 +59,29 @@ public class ApiClient
                 }
             );
         }
+        return (response, output);
+    }
+
+    public async Task<(HttpResponseMessage?, TOutput?)> Delete<TOutput>(
+        string route
+    ) where TOutput : class 
+    {
+        var response = await _httpClient.DeleteAsync(route);
+
+        var outputString = await response.Content.ReadAsStringAsync();
+
+        TOutput? output = null;
+
+        if (!String.IsNullOrWhiteSpace(outputString))
+        {
+            output = JsonSerializer.Deserialize<TOutput>(outputString,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+        }
+
         return (response, output);
     }
 }
