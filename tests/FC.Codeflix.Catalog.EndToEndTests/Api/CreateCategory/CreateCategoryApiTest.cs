@@ -25,7 +25,7 @@ public class CreateCategoryApiTest
 
         var (response, output) = await _fixture.ApiClient
             .Post<CategoryModelOutput>(
-                "categories",
+                "/categories",
                 input
             );
 
