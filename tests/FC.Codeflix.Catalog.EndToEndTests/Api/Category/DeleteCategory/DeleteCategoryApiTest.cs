@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.DeleteCategory;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.DeleteCategory;
 
 [Collection(nameof(DeleteCategoryApiTestFixture))]
 public class DeleteCategoryApiTest
@@ -45,11 +45,11 @@ public class DeleteCategoryApiTest
 
         var (response, output) = await _fixture.ApiClient.Delete<ProblemDetails>(
             $"/categories/{randomGuid}"
-        );         
+        );
 
         response.Should().NotBeNull();
-        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status404NotFound);
-        output!.Status.Should().Be((int)StatusCodes.Status404NotFound);
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status404NotFound);
+        output!.Status.Should().Be(StatusCodes.Status404NotFound);
         output.Title.Should().Be("Not found");
         output.Type.Should().Be("NotFound");
         output.Detail.Should().Be($"Category '{randomGuid}' not found");

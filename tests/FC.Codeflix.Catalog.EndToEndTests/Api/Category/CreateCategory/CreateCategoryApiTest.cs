@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
 
 [Collection(nameof(CreateCategoryApiTestFixture))]
 public class CreateCategoryApiTest
@@ -37,7 +37,7 @@ public class CreateCategoryApiTest
         output.IsActive.Should().Be(input.IsActive);
         output.Id.Should().NotBeEmpty();
         output.CreatedAt.Should()
-            .NotBeSameDateAs(default(DateTime));
+            .NotBeSameDateAs(default);
 
         var dbCategory = await _fixture
             .Persistence.GetById(output.Id);
@@ -48,7 +48,7 @@ public class CreateCategoryApiTest
         dbCategory.IsActive.Should().Be(input.IsActive);
         dbCategory.Id.Should().NotBeEmpty();
         dbCategory.CreatedAt.Should()
-            .NotBeSameDateAs(default(DateTime));
+            .NotBeSameDateAs(default);
     }
 
     [Theory(DisplayName = nameof(ErrorWhenCantInstantiateAggregate))]

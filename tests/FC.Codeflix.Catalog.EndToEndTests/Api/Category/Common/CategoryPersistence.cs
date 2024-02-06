@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.Common;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 
 public class CategoryPersistence
 {
@@ -25,10 +25,10 @@ public class CategoryPersistence
         await _context.SaveChangesAsync();
     }
 
-        
+
     public async Task Insert(DomainEntity.Category category)
     {
         await _context.Categories.AddAsync(category);
         await _context.SaveChangesAsync();
-    } 
+    }
 }

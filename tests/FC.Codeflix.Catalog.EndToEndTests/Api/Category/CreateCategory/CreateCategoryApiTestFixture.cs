@@ -1,7 +1,7 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
-using FC.Codeflix.Catalog.EndToEndTests.Api.Common;
+using FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
 
 public class CreateCategoryApiTestFixture : CategoryBaseFixture
 {
@@ -16,5 +16,6 @@ public class CreateCategoryApiTestFixture : CategoryBaseFixture
 }
 
 [CollectionDefinition(nameof(CreateCategoryApiTestFixture))]
-public class CreateCategoryApiTestFixtureCollection 
-    : ICollectionFixture<CreateCategoryApiTestFixture> { }
+public class CreateCategoryApiTestFixtureCollection
+    : ICollectionFixture<CreateCategoryApiTestFixture>
+{ }

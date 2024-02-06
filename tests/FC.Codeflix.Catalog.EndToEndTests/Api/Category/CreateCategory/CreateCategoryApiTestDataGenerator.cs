@@ -1,4 +1,4 @@
-﻿namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category;
+﻿namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
 
 public class CreateCategoryApiTestDataGenerator
 {

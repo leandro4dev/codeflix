@@ -1,7 +1,7 @@
 ﻿using FC.Codeflix.Catalog.EndToEndTests.Common;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.Common;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 
 public class CategoryBaseFixture : BaseFixture
 {

@@ -1,7 +1,5 @@
-﻿using Microsoft.VisualStudio.TestPlatform.Utilities;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using Xunit.Sdk;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Common;
 
@@ -28,18 +26,27 @@ public class ApiClient
             )
         );
 
-        var outputString = await response.Content.ReadAsStringAsync();
-        TOutput? output = null;
+        var output = await GetOutput<TOutput>(response);
 
-        if (!String.IsNullOrWhiteSpace(outputString))
-        {
-            output = JsonSerializer.Deserialize<TOutput>(outputString,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }  
-            );
-        }
+        return (response, output);
+    }
+
+    public async Task<(HttpResponseMessage?, TOutput?)> Put<TOutput>(
+        string route, 
+        object payload
+    ) where TOutput: class
+    {
+        var response = await _httpClient.PutAsync(
+            route,
+            new StringContent(
+                JsonSerializer.Serialize(payload),
+                Encoding.UTF8,
+                "application/json"
+            )
+        );
+
+        var output = await GetOutput<TOutput>(response);
+
         return (response, output);
     }
 
@@ -47,18 +54,9 @@ public class ApiClient
         where TOutput : class
     {
         var response = await _httpClient.GetAsync(route);
-        var outputString = await response.Content.ReadAsStringAsync();
-        TOutput? output = null;
 
-        if (!String.IsNullOrWhiteSpace(outputString))
-        {
-            output = JsonSerializer.Deserialize<TOutput>(outputString,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
-        }
+        var output = await GetOutput<TOutput>(response);
+
         return (response, output);
     }
 
@@ -68,10 +66,19 @@ public class ApiClient
     {
         var response = await _httpClient.DeleteAsync(route);
 
+        var output = await GetOutput<TOutput>(response);
+
+        return (response, output);
+    }
+
+    private async Task<TOutput?> GetOutput<TOutput>
+    (
+        HttpResponseMessage response
+    )
+        where TOutput : class
+    {
         var outputString = await response.Content.ReadAsStringAsync();
-
         TOutput? output = null;
-
         if (!String.IsNullOrWhiteSpace(outputString))
         {
             output = JsonSerializer.Deserialize<TOutput>(outputString,
@@ -82,6 +89,7 @@ public class ApiClient
             );
         }
 
-        return (response, output);
+        return output;
     }
+
 }
