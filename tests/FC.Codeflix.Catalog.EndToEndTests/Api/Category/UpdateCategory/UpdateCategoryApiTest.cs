@@ -8,7 +8,7 @@ using System.Net;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.UpdateCategory;
 
 [Collection(nameof(UpdateCategoryApiTestFixture))]
-public class UpdateCategoryApiTest
+public class UpdateCategoryApiTest : IDisposable
 {
     private readonly UpdateCategoryApiTestFixture _fixture;
 
@@ -171,5 +171,10 @@ public class UpdateCategoryApiTest
         output.Type.Should().Be("UnprocessableEntity");
         output.Status.Should().Be(StatusCodes.Status422UnprocessableEntity);
         output.Detail.Should().Be(expectedDetail);
+    }
+
+    public void Dispose()
+    {
+        _fixture.CleanPersistence();
     }
 }

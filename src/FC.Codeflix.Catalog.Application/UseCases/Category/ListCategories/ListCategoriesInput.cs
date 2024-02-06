@@ -16,4 +16,10 @@ public class ListCategoriesInput
     ) : base(page, perPage, search, sort, dir)
     {
     }
+
+    public ListCategoriesInput() 
+        : base(1, 15, "", "", SearchOrder.Asc)
+    {
+
+    }
 }
