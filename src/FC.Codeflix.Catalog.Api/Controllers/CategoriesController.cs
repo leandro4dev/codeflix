@@ -56,7 +56,7 @@ public class CategoriesController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(ListCategoriesOutput), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> List(
         [FromQuery] ListCategoriesInput input,
         CancellationToken cancellationToken    
     )
