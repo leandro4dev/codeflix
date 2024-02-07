@@ -19,7 +19,7 @@ public class UpdateCategoryApiTest : IDisposable
 
     [Fact(DisplayName = nameof(UpdateCategory))]
     [Trait("End2End/Api", "Category/Update - Endpoints")]
-    public async void UpdateCategory()
+    public async Task UpdateCategory()
     {
         var exampleCategory = _fixture.GetExampleCategory();
         await _fixture.Persistence.Insert(exampleCategory);
@@ -50,7 +50,7 @@ public class UpdateCategoryApiTest : IDisposable
 
     [Fact(DisplayName = nameof(UpdateCategoryOnlyName))]
     [Trait("End2End/Api", "Category/Update - Endpoints")]
-    public async void UpdateCategoryOnlyName()
+    public async Task UpdateCategoryOnlyName()
     {
         var exampleCategory = _fixture.GetExampleCategory();
         await _fixture.Persistence.Insert(exampleCategory);
@@ -84,7 +84,7 @@ public class UpdateCategoryApiTest : IDisposable
 
     [Fact(DisplayName = nameof(UpdateCategoryNameAndDescription))]
     [Trait("End2End/Api", "Category/Update - Endpoints")]
-    public async void UpdateCategoryNameAndDescription()
+    public async Task UpdateCategoryNameAndDescription()
     {
         var exampleCategory = _fixture.GetExampleCategory();
         await _fixture.Persistence.Insert(exampleCategory);
@@ -119,7 +119,7 @@ public class UpdateCategoryApiTest : IDisposable
 
     [Fact(DisplayName = nameof(ErrorWhenNotFound))]
     [Trait("End2End/Api", "Category/Update - Endpoints")]
-    public async void ErrorWhenNotFound()
+    public async Task ErrorWhenNotFound()
     {
         var examplecategoryList = _fixture.GetExampleCategoriesList();
         await _fixture.Persistence.InsertList(examplecategoryList);
@@ -148,7 +148,7 @@ public class UpdateCategoryApiTest : IDisposable
         nameof(UpdateCategoryApiTestDataGenerator.GetInvalidInputs),
         MemberType = typeof(UpdateCategoryApiTestDataGenerator)
     )]
-    public async void ErrorWhenCantInstantiateAggregate(
+    public async Task ErrorWhenCantInstantiateAggregate(
         UpdateCategoryInput input, 
         string expectedDetail
     )
