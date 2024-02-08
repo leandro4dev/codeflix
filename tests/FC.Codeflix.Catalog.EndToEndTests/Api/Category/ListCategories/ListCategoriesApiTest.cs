@@ -230,12 +230,14 @@ public class ListCategoriesApiTest : IDisposable
         string order
     )
     {
-        var exampleCategoriesList = _fixture.GetExampleCategoriesList(20);
+        var exampleCategoriesList = _fixture.GetExampleCategoriesList(10);
         await _fixture.Persistence.InsertList(exampleCategoriesList);
 
         var searchOrder = order.ToLower() == "asc" ? SearchOrder.Asc : SearchOrder.Desc; 
 
         var input = new ListCategoriesInput(
+            page: 1,
+            perPage: 20,
             dir: searchOrder,
             sort: orderBy
         );
@@ -246,6 +248,32 @@ public class ListCategoriesApiTest : IDisposable
         );
 
 
+        response.Should().NotBeNull();
+        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status200OK);
+        output.Should().NotBeNull();
+        output!.Total.Should().Be(exampleCategoriesList.Count);
+        output.Items.Should().HaveCount(exampleCategoriesList.Count);
+        output.Page.Should().Be(input.Page);
+        output.PerPage.Should().Be(input.PerPage);
+
+        var expectedOrderedList = _fixture.CloneCategoriesListOrdered(
+            exampleCategoriesList,
+            orderBy,
+            searchOrder
+        );
+
+        for (int indice = 0; indice < expectedOrderedList.Count; indice++)
+        {
+            var expectedItem = expectedOrderedList[indice];
+            var outputItem = output.Items[indice];
+
+            outputItem.Should().NotBeNull();
+            expectedItem.Should().NotBeNull();
+            outputItem.Name.Should().Be(expectedItem.Name);
+            outputItem.Description.Should().Be(expectedItem.Description);
+            outputItem.IsActive.Should().Be(expectedItem.IsActive);
+            outputItem.CreatedAt.Should().Be(expectedItem.CreatedAt);
+        }
     }
 
     public void Dispose()
