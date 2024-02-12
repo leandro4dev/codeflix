@@ -4,7 +4,9 @@ using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 using FC.Codeflix.Catalog.EndToEndTests.Extensions.DateTime;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System.Net;
+using Xunit.Abstractions;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.ListCategories;
 
@@ -12,10 +14,12 @@ namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.ListCategories;
 public class ListCategoriesApiTest : IDisposable
 {
     private readonly ListCategoriesApiTestFixture _fixture;
+    private readonly ITestOutputHelper _output;
 
-    public ListCategoriesApiTest(ListCategoriesApiTestFixture fixture)
+    public ListCategoriesApiTest(ListCategoriesApiTestFixture fixture, ITestOutputHelper output)
     {
         _fixture = fixture;
+        _output = output;
     }
 
     [Fact(DisplayName = nameof(ListCategoriesAndTotalByDefault))]
@@ -48,6 +52,9 @@ public class ListCategoriesApiTest : IDisposable
             outputItem.Name.Should().Be(exampleItem.Name);
             outputItem.Description.Should().Be(exampleItem.Description);
             outputItem.IsActive.Should().Be(exampleItem.IsActive);
+            outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
+                exampleItem.CreatedAt.TrimMillisSeconds()
+            );
         }
     }
 
@@ -102,6 +109,9 @@ public class ListCategoriesApiTest : IDisposable
             outputItem.Name.Should().Be(exampleCategory.Name);
             outputItem.Description.Should().Be(exampleCategory.Description);
             outputItem.IsActive.Should().Be(exampleCategory.IsActive);
+            outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
+                exampleCategory.CreatedAt.TrimMillisSeconds()
+            );
         }
     }
 
@@ -148,6 +158,9 @@ public class ListCategoriesApiTest : IDisposable
             outputItem.Name.Should().Be(exampleCategory.Name);
             outputItem.Description.Should().Be(exampleCategory.Description);
             outputItem.IsActive.Should().Be(exampleCategory.IsActive);
+            outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
+                exampleCategory.CreatedAt.TrimMillisSeconds()
+            );
         }
     }
 
@@ -233,7 +246,7 @@ public class ListCategoriesApiTest : IDisposable
         var exampleCategoriesList = _fixture.GetExampleCategoriesList(10);
         await _fixture.Persistence.InsertList(exampleCategoriesList);
 
-        var searchOrder = order.ToLower() == "asc" ? SearchOrder.Asc : SearchOrder.Desc; 
+        var searchOrder = order.ToLower() == "asc" ? SearchOrder.Asc : SearchOrder.Desc;
 
         var input = new ListCategoriesInput(
             page: 1,
@@ -247,9 +260,8 @@ public class ListCategoriesApiTest : IDisposable
             input
         );
 
-
         response.Should().NotBeNull();
-        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status200OK);
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
         output!.Total.Should().Be(exampleCategoriesList.Count);
         output.Items.Should().HaveCount(exampleCategoriesList.Count);
@@ -262,16 +274,89 @@ public class ListCategoriesApiTest : IDisposable
             searchOrder
         );
 
+        var count = 0;
+        var expectedArr = expectedOrderedList.Select(x => $"{++count}, {x.Id}, {x.Name}, {x.CreatedAt} {JsonConvert.SerializeObject(x)}");
+        count = 0;
+        var outputArr = output.Items.Select(x => $"{++count}, {x.Id}, {x.Name}, {x.CreatedAt} {JsonConvert.SerializeObject(x)}");
+
+        _output.WriteLine("Expecteds...");
+        _output.WriteLine(String.Join('\n', expectedArr));
+        _output.WriteLine("Outputs...");
+        _output.WriteLine(String.Join('\n', outputArr));
+
         for (int indice = 0; indice < expectedOrderedList.Count; indice++)
         {
-            var expectedItem = expectedOrderedList[indice];
             var outputItem = output.Items[indice];
+            var expectedItem = expectedOrderedList[indice];
 
             outputItem.Should().NotBeNull();
             expectedItem.Should().NotBeNull();
+            outputItem.Id.Should().Be(expectedItem.Id);
             outputItem.Name.Should().Be(expectedItem.Name);
             outputItem.Description.Should().Be(expectedItem.Description);
             outputItem.IsActive.Should().Be(expectedItem.IsActive);
+        }
+    }
+
+
+    [Theory(DisplayName = nameof(ListOrderedDate))]
+    [Trait("EndToEnd/API", "Category/List Endpoints")]
+    [InlineData("createdAt", "asc")]
+    [InlineData("createdAt", "desc")]
+    public async Task ListOrderedDate(string orderBy, string order)
+    {
+        var exampleCategoriesList = _fixture.GetExampleCategoriesList(10);
+        await _fixture.Persistence.InsertList(exampleCategoriesList);
+
+        var searchOrder = order.ToLower() == "asc" ? SearchOrder.Asc : SearchOrder.Desc;
+
+        var input = new ListCategoriesInput(
+            page: 1,
+            perPage: 20,
+            dir: searchOrder,
+            sort: orderBy
+        );
+
+        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+            "/categories",
+            input
+        );
+
+        response.Should().NotBeNull();
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
+        output.Should().NotBeNull();
+        output!.Total.Should().Be(exampleCategoriesList.Count);
+        output.Items.Should().HaveCount(exampleCategoriesList.Count);
+        output.Page.Should().Be(input.Page);
+        output.PerPage.Should().Be(input.PerPage);
+        DateTime? lastItemDate = null;
+
+        foreach (var outputItem in output.Items)
+        {
+            var exampleCategory = exampleCategoriesList.Find(x => x.Id == outputItem.Id);
+            exampleCategory.Should().NotBeNull();
+            outputItem.Should().NotBeNull();
+            outputItem.Id.Should().Be(exampleCategory!.Id);
+            outputItem.Name.Should().Be(exampleCategory.Name);
+            outputItem.Description.Should().Be(exampleCategory.Description);
+            outputItem.IsActive.Should().Be(exampleCategory.IsActive);
+            outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
+                exampleCategory.CreatedAt.TrimMillisSeconds()
+            );
+
+            if(lastItemDate != null)
+            {
+                if(order == "asc")
+                {
+                    Assert.True(outputItem.CreatedAt >= lastItemDate);
+                }
+                else
+                {
+                    Assert.True(outputItem.CreatedAt <= lastItemDate);
+                }
+            }
+
+            lastItemDate = outputItem.CreatedAt;
         }
     }
 
