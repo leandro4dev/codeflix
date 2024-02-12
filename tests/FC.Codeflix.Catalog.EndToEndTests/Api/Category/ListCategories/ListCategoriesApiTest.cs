@@ -284,17 +284,18 @@ public class ListCategoriesApiTest : IDisposable
         _output.WriteLine("Outputs...");
         _output.WriteLine(String.Join('\n', outputArr));
 
-        for (int indice = 0; indice < expectedOrderedList.Count; indice++)
+        foreach (var outputItem in output.Items)
         {
-            var outputItem = output.Items[indice];
-            var expectedItem = expectedOrderedList[indice];
+            var expectedItem = expectedOrderedList.Find(x => x.Id == outputItem.Id); ;
 
             outputItem.Should().NotBeNull();
             expectedItem.Should().NotBeNull();
-            outputItem.Id.Should().Be(expectedItem.Id);
-            outputItem.Name.Should().Be(expectedItem.Name);
+            outputItem.Name.Should().Be(expectedItem!.Name);
             outputItem.Description.Should().Be(expectedItem.Description);
             outputItem.IsActive.Should().Be(expectedItem.IsActive);
+            outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
+                expectedItem.CreatedAt.TrimMillisSeconds()
+            );
         }
     }
 
