@@ -87,7 +87,14 @@ public class CategoryBaseFixture : BaseFixture
 
     public List<DomainEntity.Category> GetExampleCategoriesList(int length = 10)
     {
-        return Enumerable.Range(1, length)
-            .Select(_ => GetExampleCategory()).ToList();
+        var tasks = Enumerable.Range(1, length)
+            .Select(async _ =>
+            {
+                await Task.Delay(1);
+                return GetExampleCategory();
+            });
+
+        var categories = Task.WhenAll(tasks).Result;
+        return categories.ToList();
     }
 }

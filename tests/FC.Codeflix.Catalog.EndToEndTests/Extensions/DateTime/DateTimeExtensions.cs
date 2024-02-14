@@ -13,7 +13,8 @@ public static class DateTimeExtensions
             dateTime.Hour,
             dateTime.Minute,
             dateTime.Second,
-            0,
+            dateTime.Microsecond,
+            dateTime.Microsecond,
             dateTime.Kind
         );
     }

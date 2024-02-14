@@ -1,5 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 using FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.ListCategories;

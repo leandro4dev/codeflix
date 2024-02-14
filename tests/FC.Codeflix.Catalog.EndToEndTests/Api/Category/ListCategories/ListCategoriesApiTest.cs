@@ -236,8 +236,8 @@ public class ListCategoriesApiTest : IDisposable
     [InlineData("name", "desc")]
     [InlineData("id", "asc")]
     [InlineData("id", "desc")]
-    [InlineData("createdat", "asc")]
-    [InlineData("createdat", "desc")]
+    [InlineData("createdAt", "asc")]
+    [InlineData("createdAt", "desc")]
     public async Task ListCategoryOrdered(
         string orderBy,
         string order
@@ -284,13 +284,14 @@ public class ListCategoriesApiTest : IDisposable
         _output.WriteLine("Outputs...");
         _output.WriteLine(String.Join('\n', outputArr));
 
-        foreach (var outputItem in output.Items)
+        for (int indice = 0; indice < expectedOrderedList.Count; indice++)
         {
-            var expectedItem = expectedOrderedList.Find(x => x.Id == outputItem.Id); ;
+            var outputItem = output.Items[indice];
+            var expectedItem = expectedOrderedList[indice];
 
             outputItem.Should().NotBeNull();
             expectedItem.Should().NotBeNull();
-            outputItem.Name.Should().Be(expectedItem!.Name);
+            outputItem.Name.Should().Be(expectedItem.Name);
             outputItem.Description.Should().Be(expectedItem.Description);
             outputItem.IsActive.Should().Be(expectedItem.IsActive);
             outputItem.CreatedAt.TrimMillisSeconds().Should().Be(
