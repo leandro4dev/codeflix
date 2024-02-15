@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
+﻿using FC.Codeflix.Catalog.Api.ApiModels.Category;
+using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.UpdateCategory;
+
 
 [Collection(nameof(UpdateCategoryApiTestFixture))]
 public class UpdateCategoryApiTest : IDisposable
@@ -24,7 +26,7 @@ public class UpdateCategoryApiTest : IDisposable
         var exampleCategory = _fixture.GetExampleCategory();
         await _fixture.Persistence.Insert(exampleCategory);
 
-        var input = _fixture.GetExampleInput(exampleCategory.Id);
+        var input = _fixture.GetExampleInput();
 
         var (response, output) = await _fixture.ApiClient
             .Put<CategoryModelOutput>(
@@ -126,7 +128,7 @@ public class UpdateCategoryApiTest : IDisposable
 
         var randomGuid = Guid.NewGuid();
 
-        var input = _fixture.GetExampleInput(randomGuid);
+        var input = _fixture.GetExampleInput();
 
         var (response, output) = await _fixture.ApiClient.Put<ProblemDetails>(
             $"/categories/{randomGuid}",

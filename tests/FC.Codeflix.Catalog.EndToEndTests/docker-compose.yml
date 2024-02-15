@@ -10,4 +10,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Cod3flix.@
 
-    
+networks:
+  default:
+    name: service_catalog
