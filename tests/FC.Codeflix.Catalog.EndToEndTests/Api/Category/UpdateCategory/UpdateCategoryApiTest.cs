@@ -35,11 +35,11 @@ public class UpdateCategoryApiTest : IDisposable
             );
 
         response.Should().NotBeNull();
-        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status200OK);
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output!.Id.Should().Be(exampleCategory.Id);
         output.Name.Should().Be(input.Name);
         output.Description.Should().Be(input.Description);
-        output.IsActive.Should().Be((bool) input.IsActive!);
+        output.IsActive.Should().Be((bool)input.IsActive!);
 
         var dbCategory = await _fixture.Persistence.GetById(exampleCategory.Id);
 
@@ -58,7 +58,7 @@ public class UpdateCategoryApiTest : IDisposable
         await _fixture.Persistence.Insert(exampleCategory);
 
         var input = new UpdateCategoryInput(
-            exampleCategory.Id, 
+            exampleCategory.Id,
             _fixture.GetValidCategoryName()
         );
 
@@ -136,7 +136,7 @@ public class UpdateCategoryApiTest : IDisposable
         );
 
         response.Should().NotBeNull();
-        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status404NotFound);
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status404NotFound);
         output.Should().NotBeNull();
         output!.Status.Should().Be(StatusCodes.Status404NotFound);
         output.Title.Should().Be("Not found");
@@ -151,7 +151,7 @@ public class UpdateCategoryApiTest : IDisposable
         MemberType = typeof(UpdateCategoryApiTestDataGenerator)
     )]
     public async Task ErrorWhenCantInstantiateAggregate(
-        UpdateCategoryInput input, 
+        UpdateCategoryApiInput input,
         string expectedDetail
     )
     {
@@ -159,15 +159,14 @@ public class UpdateCategoryApiTest : IDisposable
         await _fixture.Persistence.InsertList(exampleCategoryList);
 
         var exampleCategory = exampleCategoryList[5];
-        input.Id = exampleCategory.Id;
 
         var (response, output) = await _fixture.ApiClient.Put<ProblemDetails>(
-            $"/categories/{input.Id}",
+            $"/categories/{exampleCategory.Id}",
             input
         );
 
         response.Should().NotBeNull();
-        response!.StatusCode.Should().Be((HttpStatusCode) StatusCodes.Status422UnprocessableEntity);
+        response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status422UnprocessableEntity);
         output.Should().NotBeNull();
         output!.Title.Should().Be("One or more validation errors ocurred");
         output.Type.Should().Be("UnprocessableEntity");

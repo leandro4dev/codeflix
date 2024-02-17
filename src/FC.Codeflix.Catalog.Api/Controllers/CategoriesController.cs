@@ -1,4 +1,5 @@
 ﻿using FC.Codeflix.Catalog.Api.ApiModels.Category;
+using FC.Codeflix.Catalog.Api.ApiModels.Response;
 using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 using FC.Codeflix.Catalog.Application.UseCases.Category.DeleteCategory;
@@ -34,14 +35,14 @@ public class CategoriesController : ControllerBase
     {
         var output = await _mediator.Send(input, cancellationToken);
         return CreatedAtAction(
-            nameof(GetById), 
-            new {output.Id}, 
+            nameof(GetById),
+            new { output.Id },
             output
-        ); 
+        );
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<CategoryModelOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
         [FromRoute] Guid id,
@@ -49,19 +50,19 @@ public class CategoriesController : ControllerBase
     )
     {
         var output = await _mediator.Send(
-            new GetCategoryInput(id), 
+            new GetCategoryInput(id),
             cancellationToken
         );
 
-        return Ok(output);
+        return Ok(new ApiResponse<CategoryModelOutput>(output));
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(ListCategoriesOutput), StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
-        CancellationToken cancellationToken,    
+        CancellationToken cancellationToken,
         [FromQuery] int? page = null,
-        [FromQuery] int? perPage = null,
+        [FromQuery(Name = "per_page")] int? perPage = null,
         [FromQuery] string? search = null,
         [FromQuery] string? sort = null,
         [FromQuery] SearchOrder? dir = null
@@ -111,9 +112,9 @@ public class CategoriesController : ControllerBase
     )
     {
         var input = new UpdateCategoryInput(
-            id, 
-            apiInput.Name, 
-            apiInput.Description, 
+            id,
+            apiInput.Name,
+            apiInput.Description,
             apiInput.IsActive
         );
 
