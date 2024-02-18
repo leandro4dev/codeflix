@@ -25,7 +25,7 @@ public class CategoriesController : ControllerBase
 
 
     [HttpPost]
-    [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<CategoryModelOutput>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Create(
@@ -37,7 +37,7 @@ public class CategoriesController : ControllerBase
         return CreatedAtAction(
             nameof(GetById),
             new { output.Id },
-            output
+            new ApiResponse<CategoryModelOutput>(output)
         );
     }
 
@@ -101,7 +101,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<CategoryModelOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
@@ -123,6 +123,6 @@ public class CategoriesController : ControllerBase
             cancellationToken
         );
 
-        return Ok(output);
+        return Ok(new ApiResponse<CategoryModelOutput>(output));
     }
 }
