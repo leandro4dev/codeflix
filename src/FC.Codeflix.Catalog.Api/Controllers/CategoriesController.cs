@@ -80,7 +80,8 @@ public class CategoriesController : ControllerBase
             cancellationToken
         );
 
-        return Ok(output);
+
+        return Ok(new ApiResponseList<CategoryModelOutput>(output));
     }
 
 

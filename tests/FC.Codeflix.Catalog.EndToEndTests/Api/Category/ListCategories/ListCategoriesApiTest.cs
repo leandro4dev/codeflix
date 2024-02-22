@@ -1,7 +1,9 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
+﻿using FC.Codeflix.Catalog.Api.ApiModels.Response;
+using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.ListCategories;
 using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 using FC.Codeflix.Catalog.EndToEndTests.Extensions.DateTime;
+using FC.Codeflix.Catalog.EndToEndTests.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -9,6 +11,7 @@ using System.Net;
 using Xunit.Abstractions;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.ListCategories;
+
 
 [Collection(nameof(ListCategoriesApiTestFixture))]
 public class ListCategoriesApiTest : IDisposable
@@ -24,26 +27,28 @@ public class ListCategoriesApiTest : IDisposable
 
     [Fact(DisplayName = nameof(ListCategoriesAndTotalByDefault))]
     [Trait("End2End/Api", "Category/List - Endpoints")]
-    public async Task ListCategoriesAndTotalByDefault() 
+    public async Task ListCategoriesAndTotalByDefault()
     {
         var defaultPage = 1;
         var defaultPerPage = 15;
         var exampleCategoryList = _fixture.GetExampleCategoriesList(20);
         await _fixture.Persistence.InsertList(exampleCategoryList);
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories"
         );
 
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(exampleCategoryList.Count);
-        output.Items.Should().HaveCount(defaultPerPage);
-        output.PerPage.Should().Be(defaultPerPage);
-        output.Page.Should().Be(defaultPage);
+        output!.Data.Should().NotBeNull();
+        output.Meta.Should().NotBeNull();
+        output.Meta!.Total.Should().Be(exampleCategoryList.Count);
+        output.Meta.PerPage.Should().Be(defaultPerPage);
+        output.Meta.CurrentPage.Should().Be(defaultPage);
 
-        foreach (CategoryModelOutput outputItem in output.Items) {
+        foreach (CategoryModelOutput outputItem in output.Data)
+        {
             var exampleItem = exampleCategoryList.FirstOrDefault(x => x.Id == outputItem.Id);
 
             exampleItem.Should().NotBeNull();
@@ -60,21 +65,24 @@ public class ListCategoriesApiTest : IDisposable
 
     [Fact(DisplayName = nameof(ItemsEmptyWhenPersistenceEmpty))]
     [Trait("End2End/Api", "Category/List - Endpoints")]
-    public async Task ItemsEmptyWhenPersistenceEmpty() {
+    public async Task ItemsEmptyWhenPersistenceEmpty()
+    {
         var defaultPage = 1;
         var defaultPerPage = 15;
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
-            "/categories"    
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
+            "/categories"
         );
 
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(0);
-        output.Items.Should().HaveCount(0);
-        output.PerPage.Should().Be(defaultPerPage);
-        output.Page.Should().Be(defaultPage);
+        output.Data.Should().NotBeNull();
+        output.Meta.Should().NotBeNull();
+        output.Meta.Total.Should().Be(0);
+        output.Data.Should().HaveCount(0);
+        output.Meta.PerPage.Should().Be(defaultPerPage);
+        output.Meta.CurrentPage.Should().Be(defaultPage);
     }
 
     [Fact(DisplayName = nameof(ListCategoriesAndTotal))]
@@ -86,23 +94,25 @@ public class ListCategoriesApiTest : IDisposable
 
         var input = new ListCategoriesInput(page: 1, perPage: 5);
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories",
             input
-        ); 
+        );
 
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(exampleCategoryList.Count);
-        output.Items.Should().HaveCount(input.PerPage);
-        output.Page.Should().Be(input.Page);
-        output.PerPage.Should().Be(input.PerPage);
+        output!.Meta.Should().NotBeNull();
+        output.Data.Should().NotBeNull();
+        output.Meta.Total.Should().Be(exampleCategoryList.Count);
+        output.Data.Should().HaveCount(input.PerPage);
+        output.Meta.CurrentPage.Should().Be(input.Page);
+        output.Meta.PerPage.Should().Be(input.PerPage);
 
-        foreach (var outputItem in output.Items)
+        foreach (var outputItem in output.Data)
         {
             var exampleCategory = exampleCategoryList.Find(x => x.Id == outputItem.Id);
-            
+
             exampleCategory.Should().NotBeNull();
             outputItem.Should().NotBeNull();
             outputItem.Id.Should().Be(exampleCategory!.Id);
@@ -132,11 +142,11 @@ public class ListCategoriesApiTest : IDisposable
         await _fixture.Persistence.InsertList(exampleCategoryList);
 
         var input = new ListCategoriesInput(
-            page, 
+            page,
             perPage
         );
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories",
             input
         );
@@ -144,12 +154,14 @@ public class ListCategoriesApiTest : IDisposable
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(quantityCategoriesToGenerate);
-        output.Items.Should().HaveCount(expectedQuantityItems);
-        output.Page.Should().Be(input.Page);
-        output.PerPage.Should().Be(input.PerPage);
+        output!.Meta.Should().NotBeNull();
+        output.Data.Should().NotBeNull();
+        output.Meta.Total.Should().Be(quantityCategoriesToGenerate);
+        output.Data.Should().HaveCount(expectedQuantityItems);
+        output.Meta.CurrentPage.Should().Be(input.Page);
+        output.Meta.PerPage.Should().Be(input.PerPage);
 
-        foreach (var outputItem in output.Items)
+        foreach (var outputItem in output.Data)
         {
             var exampleCategory = exampleCategoryList.Find(x => x.Id == outputItem.Id);
             exampleCategory.Should().NotBeNull();
@@ -205,7 +217,7 @@ public class ListCategoriesApiTest : IDisposable
             search
         );
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories",
             input
         );
@@ -213,12 +225,14 @@ public class ListCategoriesApiTest : IDisposable
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(expectedQuantityTotalItems);
-        output.Items.Should().HaveCount(expectedQuantityItemsReturned);
-        output.Page.Should().Be(input.Page);
-        output.PerPage.Should().Be(input.PerPage);
+        output!.Meta.Should().NotBeNull();
+        output.Data.Should().NotBeNull();
+        output.Meta.Total.Should().Be(expectedQuantityTotalItems);
+        output.Data.Should().HaveCount(expectedQuantityItemsReturned);
+        output.Meta.CurrentPage.Should().Be(input.Page);
+        output.Meta.PerPage.Should().Be(input.PerPage);
 
-        foreach (var outputItem in output.Items)
+        foreach (var outputItem in output.Data)
         {
             var exampleCategory = exampleCategoriesList.Find(x => x.Id == outputItem.Id);
             exampleCategory.Should().NotBeNull();
@@ -255,7 +269,7 @@ public class ListCategoriesApiTest : IDisposable
             sort: orderBy
         );
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories",
             input
         );
@@ -263,10 +277,12 @@ public class ListCategoriesApiTest : IDisposable
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(exampleCategoriesList.Count);
-        output.Items.Should().HaveCount(exampleCategoriesList.Count);
-        output.Page.Should().Be(input.Page);
-        output.PerPage.Should().Be(input.PerPage);
+        output!.Meta.Should().NotBeNull();
+        output.Data.Should().NotBeNull();
+        output.Meta.Total.Should().Be(exampleCategoriesList.Count);
+        output.Data.Should().HaveCount(exampleCategoriesList.Count);
+        output.Meta.CurrentPage.Should().Be(input.Page);
+        output.Meta.PerPage.Should().Be(input.PerPage);
 
         var expectedOrderedList = _fixture.CloneCategoriesListOrdered(
             exampleCategoriesList,
@@ -277,7 +293,7 @@ public class ListCategoriesApiTest : IDisposable
         var count = 0;
         var expectedArr = expectedOrderedList.Select(x => $"{++count}, {x.Id}, {x.Name}, {x.CreatedAt} {JsonConvert.SerializeObject(x)}");
         count = 0;
-        var outputArr = output.Items.Select(x => $"{++count}, {x.Id}, {x.Name}, {x.CreatedAt} {JsonConvert.SerializeObject(x)}");
+        var outputArr = output.Data.Select(x => $"{++count}, {x.Id}, {x.Name}, {x.CreatedAt} {JsonConvert.SerializeObject(x)}");
 
         _output.WriteLine("Expecteds...");
         _output.WriteLine(String.Join('\n', expectedArr));
@@ -286,7 +302,7 @@ public class ListCategoriesApiTest : IDisposable
 
         for (int indice = 0; indice < expectedOrderedList.Count; indice++)
         {
-            var outputItem = output.Items[indice];
+            var outputItem = output.Data[indice];
             var expectedItem = expectedOrderedList[indice];
 
             outputItem.Should().NotBeNull();
@@ -319,7 +335,7 @@ public class ListCategoriesApiTest : IDisposable
             sort: orderBy
         );
 
-        var (response, output) = await _fixture.ApiClient.Get<ListCategoriesOutput>(
+        var (response, output) = await _fixture.ApiClient.Get<TestApiResponseList<CategoryModelOutput>>(
             "/categories",
             input
         );
@@ -327,13 +343,15 @@ public class ListCategoriesApiTest : IDisposable
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output!.Total.Should().Be(exampleCategoriesList.Count);
-        output.Items.Should().HaveCount(exampleCategoriesList.Count);
-        output.Page.Should().Be(input.Page);
-        output.PerPage.Should().Be(input.PerPage);
+        output!.Meta.Should().NotBeNull();
+        output.Data.Should().NotBeNull();
+        output.Meta.Total.Should().Be(exampleCategoriesList.Count);
+        output.Data.Should().HaveCount(exampleCategoriesList.Count);
+        output.Meta.CurrentPage.Should().Be(input.Page);
+        output.Meta.PerPage.Should().Be(input.PerPage);
         DateTime? lastItemDate = null;
 
-        foreach (var outputItem in output.Items)
+        foreach (var outputItem in output.Data)
         {
             var exampleCategory = exampleCategoriesList.Find(x => x.Id == outputItem.Id);
             exampleCategory.Should().NotBeNull();
@@ -346,9 +364,9 @@ public class ListCategoriesApiTest : IDisposable
                 exampleCategory.CreatedAt.TrimMillisSeconds()
             );
 
-            if(lastItemDate != null)
+            if (lastItemDate != null)
             {
-                if(order == "asc")
+                if (order == "asc")
                 {
                     Assert.True(outputItem.CreatedAt >= lastItemDate);
                 }
