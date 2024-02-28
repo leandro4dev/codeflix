@@ -77,9 +77,9 @@ public class ListCategoriesApiTest : IDisposable
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         output.Should().NotBeNull();
-        output.Data.Should().NotBeNull();
+        output!.Data.Should().NotBeNull();
         output.Meta.Should().NotBeNull();
-        output.Meta.Total.Should().Be(0);
+        output.Meta!.Total.Should().Be(0);
         output.Data.Should().HaveCount(0);
         output.Meta.PerPage.Should().Be(defaultPerPage);
         output.Meta.CurrentPage.Should().Be(defaultPage);
@@ -104,7 +104,7 @@ public class ListCategoriesApiTest : IDisposable
         output.Should().NotBeNull();
         output!.Meta.Should().NotBeNull();
         output.Data.Should().NotBeNull();
-        output.Meta.Total.Should().Be(exampleCategoryList.Count);
+        output.Meta!.Total.Should().Be(exampleCategoryList.Count);
         output.Data.Should().HaveCount(input.PerPage);
         output.Meta.CurrentPage.Should().Be(input.Page);
         output.Meta.PerPage.Should().Be(input.PerPage);
@@ -156,7 +156,7 @@ public class ListCategoriesApiTest : IDisposable
         output.Should().NotBeNull();
         output!.Meta.Should().NotBeNull();
         output.Data.Should().NotBeNull();
-        output.Meta.Total.Should().Be(quantityCategoriesToGenerate);
+        output.Meta!.Total.Should().Be(quantityCategoriesToGenerate);
         output.Data.Should().HaveCount(expectedQuantityItems);
         output.Meta.CurrentPage.Should().Be(input.Page);
         output.Meta.PerPage.Should().Be(input.PerPage);
@@ -227,7 +227,7 @@ public class ListCategoriesApiTest : IDisposable
         output.Should().NotBeNull();
         output!.Meta.Should().NotBeNull();
         output.Data.Should().NotBeNull();
-        output.Meta.Total.Should().Be(expectedQuantityTotalItems);
+        output.Meta!.Total.Should().Be(expectedQuantityTotalItems);
         output.Data.Should().HaveCount(expectedQuantityItemsReturned);
         output.Meta.CurrentPage.Should().Be(input.Page);
         output.Meta.PerPage.Should().Be(input.PerPage);
@@ -279,7 +279,7 @@ public class ListCategoriesApiTest : IDisposable
         output.Should().NotBeNull();
         output!.Meta.Should().NotBeNull();
         output.Data.Should().NotBeNull();
-        output.Meta.Total.Should().Be(exampleCategoriesList.Count);
+        output.Meta!.Total.Should().Be(exampleCategoriesList.Count);
         output.Data.Should().HaveCount(exampleCategoriesList.Count);
         output.Meta.CurrentPage.Should().Be(input.Page);
         output.Meta.PerPage.Should().Be(input.PerPage);
@@ -345,7 +345,7 @@ public class ListCategoriesApiTest : IDisposable
         output.Should().NotBeNull();
         output!.Meta.Should().NotBeNull();
         output.Data.Should().NotBeNull();
-        output.Meta.Total.Should().Be(exampleCategoriesList.Count);
+        output.Meta!.Total.Should().Be(exampleCategoriesList.Count);
         output.Data.Should().HaveCount(exampleCategoriesList.Count);
         output.Meta.CurrentPage.Should().Be(input.Page);
         output.Meta.PerPage.Should().Be(input.PerPage);
