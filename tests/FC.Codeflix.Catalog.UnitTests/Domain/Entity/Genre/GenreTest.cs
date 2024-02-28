@@ -17,7 +17,7 @@ public class GenreTest
     [Trait("Domain", "Genre - Aggregates")]
     public void Instantiate()
     {
-        var genreName = "Horror";
+        var genreName = _fixture.GetValidName();
 
         var datetimeBefore = DateTime.Now;
         var genre = new DomainEntity.Genre(genreName);
@@ -38,7 +38,7 @@ public class GenreTest
     [InlineData(false)]
     public void InstantiateWithIsActive(bool isActive)
     {
-        var genreName = "Horror";
+        var genreName = _fixture.GetValidName();
 
         var datetimeBefore = DateTime.Now;
         var genre = new DomainEntity.Genre(genreName, isActive);
