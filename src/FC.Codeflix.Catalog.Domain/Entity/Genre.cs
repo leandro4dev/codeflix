@@ -18,6 +18,11 @@ public class Genre : AggregateRoot
         Validate();
     }
 
+    public void Update(string name)
+    {
+        Name = name;
+    }
+
     public void Activate()
     {
         IsActive = true;
